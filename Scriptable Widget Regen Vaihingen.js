@@ -6,7 +6,7 @@
 // icon-color: blue; icon-glyph: umbrella;
 
 //Widget Regen Vaihingen
-//Version 1.42 - 25.09.2022
+//Version 1.43 - 26.09.2022
 //Jens Hamann (j_hamann@gmx.net)
 
 //todo: Hintergrundfarbe mit leichtem Farbübergang festlegen. Achtung: Dunkelmodus sollte wohl deaktiviert oder besonders beachtet werden.
@@ -217,6 +217,7 @@ textzeile4c.font=Font.regularSystemFont(10);
 drittespalteStack.addSpacer(4);
 let textzeile5c =drittespalteStack.addText(wetterdatenArray[12]);
 textzeile5c.font=Font.regularSystemFont(10);
+//Test widget.addText(wetterdatenArray[12]);
 
 // Widget starten
 widget.presentMedium();
@@ -257,25 +258,84 @@ function extrahierewetterdaten(html,array) {
     let w10Ende = html.indexOf('</div>', w10aStart);
     array[10] = html.substring(w10aStart+12, w10Ende).trim();
 
+    // Wetterbeschriebung extrahieren
+    // Kann auch so aussehen:
+    //            <td class="text--center delta portable-pb desk-pb+ tdbl tdbr " >
+    //            leichter Regen
+    //                                <br />
+    //                und windig
+    //                        </td>
     let w3Start = html.indexOf('text--center delta');
     let w3aStart = html.indexOf('>', w3Start);
     let w3Ende = html.indexOf('</td>', w3aStart);
-    array[3] = html.substring(w3aStart+1, w3Ende).trim();
+    let teststring3 = html.substring(w3aStart+1, w3Ende).trim();
+    test3 = teststring3.includes("<br />");
+    //Test widget.addText(test3.toString());
+    //Test widget.addText(teststring3);
+        if (test3 == true) {
+        let w3Endea = teststring3.indexOf('<br />');
+        let teststring3a = teststring3.substring(0, w3Endea-1).trim();
+        let teststring3b = teststring3.substring(w3Endea+6,1000).trim();
+        array[3] = teststring3a + ' ' + teststring3b;
+        //Test widget.addText(teststring3);
+        //Test array[3] = 'Test';           
+    } else {
+    array[3] = teststring3;
+    }
+   
     let w6Start = html.indexOf('text--center delta',w3Start+1);
     let w6aStart = html.indexOf('>', w6Start);
     let w6Ende = html.indexOf('</td>', w6aStart);
-    array[6] = html.substring(w6aStart+1, w6Ende).trim();
+    let teststring6 = html.substring(w6aStart+1, w6Ende).trim();
+    test6 = teststring6.includes("<br />");
+    //Test widget.addText(test6.toString());
+    //Test widget.addText(teststring6);
+        if (test6 == true) {
+        let w6Endea = teststring6.indexOf('<br />');
+        let teststring6a = teststring6.substring(0, w6Endea-1).trim();
+        let teststring6b = teststring6.substring(w6Endea+6,1000).trim();
+        array[6] = teststring6a + ' ' + teststring6b;
+        //Test widget.addText(teststring6);
+        //Test array[6] = 'Test';           
+    } else {
+    array[6] = teststring6;
+    }
+    
     let w9Start = html.indexOf('text--center delta',w6Start+1);
     let w9aStart = html.indexOf('>', w9Start);
     let w9Ende = html.indexOf('</td>', w9aStart);
-    array[9] = html.substring(w9aStart+1, w9Ende).trim();
+    let teststring9 = html.substring(w9aStart+1, w9Ende).trim();
+    test9 = teststring9.includes("<br />");
+    //Test widget.addText(test9.toString());
+    //Test widget.addText(teststring9);
+    if (test9 == true) {
+        let w9Endea = teststring9.indexOf('<br />');
+        let teststring9a = teststring9.substring(0, w9Endea-1).trim();
+        let teststring9b = teststring9.substring(w9Endea+6,1000).trim();
+        array[9] = teststring9a + ' ' + teststring9b;
+        //Test widget.addText(teststring9);
+        //Test array[9] = 'Test';           
+    } else {
+    array[9] = teststring9;
+    }
+    
     let w12Start = html.indexOf('text--center delta',w9Start+1);
     let w12aStart = html.indexOf('>', w12Start);
     let w12Ende = html.indexOf('</td>', w12aStart);
-    array[12] = html.substring(w12aStart+1, w12Ende).trim();
-
-
-//Test array[11]=100;
+    let teststring12 = html.substring(w12aStart+1, w12Ende).trim();
+    test12 = teststring12.includes("<br />");
+    //Test widget.addText(test12.toString());
+    //Test widget.addText(teststring12);
+        if (test12 == true) {
+        let w12Endea = teststring12.indexOf('<br />');
+        let teststring12a = teststring12.substring(0, w12Endea-1).trim();
+        let teststring12b = teststring12.substring(w12Endea+6,1000).trim();
+        array[12] = teststring12a + ' ' + teststring12b;
+        //Test widget.addText(teststring12);
+        //Test array[12] = 'Test';           
+    } else {
+    array[12] = teststring12;
+    }
     return array;
 }
 
