@@ -6,11 +6,8 @@
 // icon-color: blue; icon-glyph: umbrella;
 
 //Widget Regen Vaihingen
-//Version 1.44 - 26.09.2022
+//Version 1.45 - 26.09.2022
 //Jens Hamann (j_hamann@gmx.net)
-
-//todo: Wetterbeschreibung extrahieren als Funktion auslagern
-//todo: Umstellung auf ... wenn Text <br /> enthält, nicht mehr kompletten Text auslesen
 
 const wetterdatenArray = [];
 
@@ -145,17 +142,17 @@ h4Stack.layoutHorizontally();
 // Stack "v4" für erste Textspalte
 let v4Stack = h4Stack.addStack();
 v4Stack.layoutVertically();
-v4Stack.size = new Size (63,100);
-// v4Stack.backgroundColor=new Color('888888');
+v4Stack.size = new Size (55,100);
+//Test v4Stack.backgroundColor=new Color('888888');
 
 let textzeile2a = v4Stack.addText(wetterdatenArray[1]+':');
-textzeile2a.font=Font.regularSystemFont(14);
+textzeile2a.font=Font.regularSystemFont(12);
 let textzeile3a = v4Stack.addText(wetterdatenArray[4]+':');
-textzeile3a.font=Font.regularSystemFont(14);
+textzeile3a.font=Font.regularSystemFont(12);
 let textzeile4a = v4Stack.addText(wetterdatenArray[7]+':');
-textzeile4a.font=Font.regularSystemFont(14);
+textzeile4a.font=Font.regularSystemFont(12);
 let textzeile5a = v4Stack.addText(wetterdatenArray[10]+':');
-textzeile5a.font=Font.regularSystemFont(14);
+textzeile5a.font=Font.regularSystemFont(12);
 v4Stack.addSpacer(6);
 let sonneSymbol = SFSymbol.named('sun.max');
 let sonneSymbolBild = v4Stack.addImage(sonneSymbol.image);
@@ -167,35 +164,35 @@ let v5Stack = h4Stack.addStack();
 v5Stack.layoutVertically();
 //Test v5Stack.backgroundColor=new Color('888888');
 v5Stack.setPadding(0, 0, 0, 0)
-v5Stack.size=new Size(45, 98)
+v5Stack.size=new Size(40, 98)
 
 // Stack "h5" für erste Textzeile rechtsbündig
 let h5Stack = v5Stack.addStack();
 h5Stack.layoutHorizontally();
 h5Stack.addSpacer();
 let textzeile2b = h5Stack.addText(wetterdatenArray[2]+'%');
-textzeile2b.font=Font.regularSystemFont(14);
+textzeile2b.font=Font.regularSystemFont(12);
 if (wetterdatenArray[2]>= gwRW) {textzeile2b.textColor=Color.red();}
 // Stack "h6" für zweite Textzeile rechtsbündig
 let h6Stack = v5Stack.addStack();
 h6Stack.layoutHorizontally();
 h6Stack.addSpacer();
 let textzeile3b = h6Stack.addText(wetterdatenArray[5]+'%');
-textzeile3b.font=Font.regularSystemFont(14);
+textzeile3b.font=Font.regularSystemFont(12);
 if (wetterdatenArray[5]>= gwRW) {textzeile3b.textColor=Color.red();}
 // Stack "h7" für dritte Textzeile rechtsbündig
 let h7Stack = v5Stack.addStack();
 h7Stack.layoutHorizontally();
 h7Stack.addSpacer();
 let textzeile4b = h7Stack.addText(wetterdatenArray[8]+'%');
-textzeile4b.font=Font.regularSystemFont(14);
+textzeile4b.font=Font.regularSystemFont(12);
 if (wetterdatenArray[8]>= gwRW) {textzeile4b.textColor=Color.red();}
 // Stack "h8" für vierte Textzeile rechtsbündig
 let h8Stack = v5Stack.addStack();
 h8Stack.layoutHorizontally();
 h8Stack.addSpacer();
 let textzeile5b = h8Stack.addText(wetterdatenArray[11]+'%');
-textzeile5b.font=Font.regularSystemFont(14);
+textzeile5b.font=Font.regularSystemFont(12);
 if (wetterdatenArray[11]>= gwRW) {textzeile5b.textColor=Color.red();}
 v5Stack.addSpacer(8);
 // Stack "h9" für fünfte Textzeile rechtsbündig
@@ -204,7 +201,7 @@ h9Stack.layoutHorizontally();
 h9Stack.addSpacer();
 let sonnenstunden = extrahieresonnenstunden(html);
 let textzeile6b = h9Stack.addText(sonnenstunden+' h');
-textzeile6b.font=Font.regularSystemFont(14);
+textzeile6b.font=Font.regularSystemFont(12);
 
 h4Stack.addSpacer(3);
 
@@ -212,18 +209,18 @@ h4Stack.addSpacer(3);
 //Längster Text bisher: "leichter Regenschauer"
 let drittespalteStack = h4Stack.addStack();
 drittespalteStack.layoutVertically();
-drittespalteStack.size = new Size(100,80);
-//Test drittespalteStack.backgroundColor=new Color('EEEEEE');
+drittespalteStack.size = new Size(120,75);
+//Test drittespalteStack.backgroundColor=new Color('777777');
 
 let textzeile2c =drittespalteStack.addText(wetterdatenArray[3]);
 textzeile2c.font=Font.regularSystemFont(10);
-drittespalteStack.addSpacer(4);
+drittespalteStack.addSpacer(2);
 let textzeile3c =drittespalteStack.addText(wetterdatenArray[6]);
 textzeile3c.font=Font.regularSystemFont(10);
-drittespalteStack.addSpacer(4);
+drittespalteStack.addSpacer(2);
 let textzeile4c =drittespalteStack.addText(wetterdatenArray[9]);
 textzeile4c.font=Font.regularSystemFont(10);
-drittespalteStack.addSpacer(4);
+drittespalteStack.addSpacer(2);
 let textzeile5c =drittespalteStack.addText(wetterdatenArray[12]);
 textzeile5c.font=Font.regularSystemFont(10);
 //Test widget.addText(wetterdatenArray[12]);
@@ -249,6 +246,7 @@ function extrahierewetterdaten(html,array) {
     let w11aStart = html.indexOf('<span class="">', w11Start);
     let w11Ende = html.indexOf('&#8239;', w11aStart);
     array[11] = html.substring(w11aStart+15, w11Ende).trim();
+    //Test array[11] =100;
     
     let w1Start = html.indexOf('elta text--center');
     let w1aStart = html.indexOf('text--bold">', w1Start);
@@ -268,85 +266,32 @@ function extrahierewetterdaten(html,array) {
     array[10] = html.substring(w10aStart+12, w10Ende).trim();
 
     // Wetterbeschreibung extrahieren
-    // Kann auch so aussehen:
-    //            <td class="text--center delta portable-pb desk-pb+ tdbl tdbr " >
-    //            leichter Regen
-    //                                <br />
-    //                und windig
-    //                        </td>
-    let w3Start = html.indexOf('text--center delta');
-    let w3aStart = html.indexOf('>', w3Start);
-    let w3Ende = html.indexOf('</td>', w3aStart);
-    let teststring3 = html.substring(w3aStart+1, w3Ende).trim();
-    test3 = teststring3.includes("<br />");
-    //Test widget.addText(test3.toString());
-    //Test widget.addText(teststring3);
-        if (test3 == true) {
-        let w3Endea = teststring3.indexOf('<br />');
-        let teststring3a = teststring3.substring(0, w3Endea-1).trim();
-        let teststring3b = teststring3.substring(w3Endea+6,1000).trim();
-        array[3] = teststring3a + ' ' + teststring3b;
-        //Test widget.addText(teststring3);
-        //Test array[3] = 'Test';           
-    } else {
-    array[3] = teststring3;
-    }
-   
-    let w6Start = html.indexOf('text--center delta',w3Start+1);
-    let w6aStart = html.indexOf('>', w6Start);
-    let w6Ende = html.indexOf('</td>', w6aStart);
-    let teststring6 = html.substring(w6aStart+1, w6Ende).trim();
-    test6 = teststring6.includes("<br />");
-    //Test widget.addText(test6.toString());
-    //Test widget.addText(teststring6);
-        if (test6 == true) {
-        let w6Endea = teststring6.indexOf('<br />');
-        let teststring6a = teststring6.substring(0, w6Endea-1).trim();
-        let teststring6b = teststring6.substring(w6Endea+6,1000).trim();
-        array[6] = teststring6a + ' ' + teststring6b;
-        //Test widget.addText(teststring6);
-        //Test array[6] = 'Test';           
-    } else {
-    array[6] = teststring6;
-    }
-    
-    let w9Start = html.indexOf('text--center delta',w6Start+1);
-    let w9aStart = html.indexOf('>', w9Start);
-    let w9Ende = html.indexOf('</td>', w9aStart);
-    let teststring9 = html.substring(w9aStart+1, w9Ende).trim();
-    test9 = teststring9.includes("<br />");
-    //Test widget.addText(test9.toString());
-    //Test widget.addText(teststring9);
-    if (test9 == true) {
-        let w9Endea = teststring9.indexOf('<br />');
-        let teststring9a = teststring9.substring(0, w9Endea-1).trim();
-        let teststring9b = teststring9.substring(w9Endea+6,1000).trim();
-        array[9] = teststring9a + ' ' + teststring9b;
-        //Test widget.addText(teststring9);
-        //Test array[9] = 'Test';           
-    } else {
-    array[9] = teststring9;
-    }
-    
-    let w12Start = html.indexOf('text--center delta',w9Start+1);
-    let w12aStart = html.indexOf('>', w12Start);
-    let w12Ende = html.indexOf('</td>', w12aStart);
-    let teststring12 = html.substring(w12aStart+1, w12Ende).trim();
-    test12 = teststring12.includes("<br />");
-    //Test widget.addText(test12.toString());
-    //Test widget.addText(teststring12);
-        if (test12 == true) {
-        let w12Endea = teststring12.indexOf('<br />');
-        let teststring12a = teststring12.substring(0, w12Endea-1).trim();
-        let teststring12b = teststring12.substring(w12Endea+6,1000).trim();
-        array[12] = teststring12a + ' ' + teststring12b;
-        //Test widget.addText(teststring12);
-        //Test array[12] = 'Test';           
-    } else {
-    array[12] = teststring12;
-    }
-    return array;
+    let w3start = html.indexOf('text--center delta');
+    let w6start = html.indexOf('text--center delta',w3start+1);
+    let w9start = html.indexOf('text--center delta',w6start+1);
+    let w12start = html.indexOf('text--center delta',w9start+1);
+    array[3] = wetterbeschreibungextrahieren(w3start);
+    array[6] = wetterbeschreibungextrahieren(w6start);
+    array[9] = wetterbeschreibungextrahieren(w9start);
+    array[12] = wetterbeschreibungextrahieren(w12start);
 }
+
+function wetterbeschreibungextrahieren(start) {
+let start2 = html.indexOf('>', start);
+let ende = html.indexOf('</td>', start2);
+let teststring = html.substring(start2+1, ende).trim();
+// Kürzung wenn Sonderfall <br />
+test = teststring.includes("<br />");
+//Test widget.addText(test3.toString());
+//Test widget.addText(teststring3);
+if (test == true) {
+    let ende2 = teststring.indexOf('<br />');
+    teststring = teststring.substring(0, ende2-1).trim()+'…';
+}
+//Test widget.addText(teststring);
+return teststring;
+}
+
 
 // Sonnenstunden aus Webseiten-Quelltext holen
 // Textvariante 1: Die Sonne ist heute fast nicht zu sehen
