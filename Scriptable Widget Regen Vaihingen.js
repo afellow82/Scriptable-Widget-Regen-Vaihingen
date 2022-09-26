@@ -6,10 +6,11 @@
 // icon-color: blue; icon-glyph: umbrella;
 
 //Widget Regen Vaihingen
-//Version 1.43 - 26.09.2022
+//Version 1.44 - 26.09.2022
 //Jens Hamann (j_hamann@gmx.net)
 
-//todo: Hintergrundfarbe mit leichtem Farbübergang festlegen. Achtung: Dunkelmodus sollte wohl deaktiviert oder besonders beachtet werden.
+//todo: Wetterbeschreibung extrahieren als Funktion auslagern
+//todo: Umstellung auf ... wenn Text <br /> enthält, nicht mehr kompletten Text auslesen
 
 const wetterdatenArray = [];
 
@@ -17,16 +18,24 @@ const wetterdatenArray = [];
 let gwRW = 50;
 
 //Definition Farbschema für Symbole und Text
-let lightColor = Color.white()
-let darkColor = Color.black()
+let lightColor = Color.black()
+let darkColor = Color.white()
 let dynColor = Color.dynamic(lightColor, darkColor)
 
 // Farben Hintergrund definieren
+let hghelloben = new Color('#D8F6CE');
+let hghellunten = new Color('#CEECF5');
+let hgdunkel = Color.black();
+let hgfarbeoben = Color.dynamic(hghelloben, hgdunkel);
+let hgfarbeunten = Color.dynamic(hghellunten, hgdunkel);
 let g = new LinearGradient();
 g.locations = [0,1];
 g.colors = [  
-  new Color('#D8F6CE'),
-  new Color('#CEECF5')
+  // Definition Werte durch die Kinder
+  //new Color('#D8F6CE'),
+  //new Color('#CEECF5')
+  hgfarbeoben,
+  hgfarbeunten
   ];
 
 // HTML-Quelltext der Anzeigenseite abrufen
@@ -38,7 +47,7 @@ let html = await req.loadString();
 let widget = new ListWidget();
 widget.setPadding(10, 5, 5, 5);
 widget.url = 'https://www.wetter.com/deutschland/stuttgart/vaihingen/DE0010287103.html';
-// widget.backgroundGradient = g;
+widget.backgroundGradient = g;
 
 // Wetterdaten auswerten
 extrahierewetterdaten(html,wetterdatenArray);
@@ -203,7 +212,7 @@ h4Stack.addSpacer(3);
 //Längster Text bisher: "leichter Regenschauer"
 let drittespalteStack = h4Stack.addStack();
 drittespalteStack.layoutVertically();
-drittespalteStack.size = new Size(110,75);
+drittespalteStack.size = new Size(100,80);
 //Test drittespalteStack.backgroundColor=new Color('EEEEEE');
 
 let textzeile2c =drittespalteStack.addText(wetterdatenArray[3]);
@@ -258,7 +267,7 @@ function extrahierewetterdaten(html,array) {
     let w10Ende = html.indexOf('</div>', w10aStart);
     array[10] = html.substring(w10aStart+12, w10Ende).trim();
 
-    // Wetterbeschriebung extrahieren
+    // Wetterbeschreibung extrahieren
     // Kann auch so aussehen:
     //            <td class="text--center delta portable-pb desk-pb+ tdbl tdbr " >
     //            leichter Regen
