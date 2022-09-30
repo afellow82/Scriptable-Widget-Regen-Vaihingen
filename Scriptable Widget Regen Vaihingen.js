@@ -6,7 +6,7 @@
 // icon-color: blue; icon-glyph: umbrella;
 
 //Widget Regen Vaihingen
-//Version 1.45 - 26.09.2022
+//Version 1.46 - 30.09.2022
 //Jens Hamann (j_hamann@gmx.net)
 
 const wetterdatenArray = [];
@@ -113,10 +113,17 @@ v2Stack.size = new Size (160,25);
 let ortText = v2Stack.addText('Stuttgart-Vaihingen');
 ortText.font=Font.semiboldSystemFont(12);
 let heute = new Date();
-let heuteText = new DateFormatter();
-heuteText.dateFormat= 'dd.MM.yyyy';
-let heuteText2 = v2Stack.addText(heuteText.string(heute))
-heuteText2.font=Font.regularSystemFont(12)
+let stundenaktuell = heute.getHours();
+let stundenaktuelltext = stundenaktuell;
+if (stundenaktuell < 10) {stundenaktuelltext = '0'+ stundenaktuell;}
+let minutenaktuell = heute.getMinutes();
+let minutenaktuelltext = minutenaktuell;
+if (minutenaktuell < 10) {minutenaktuelltext = '0'+ minutenaktuell;}
+let heutetextformat = new DateFormatter();
+heutetextformat.dateFormat= 'dd.MM.yyyy';
+let heutetext2 = heutetextformat.string(heute)+ ' ('+stundenaktuelltext+':'+minutenaktuelltext+')';
+let heutetext3 = v2Stack.addText(heutetext2);
+heutetext3.font = Font.regularSystemFont(12);
 
 // Suchsymbol einfügen
 //Stack "suchsymbol" zur Ausrichtung Suchsymbol rechts
@@ -142,7 +149,7 @@ h4Stack.layoutHorizontally();
 // Stack "v4" für erste Textspalte
 let v4Stack = h4Stack.addStack();
 v4Stack.layoutVertically();
-v4Stack.size = new Size (55,100);
+v4Stack.size = new Size (55,103);
 //Test v4Stack.backgroundColor=new Color('888888');
 
 let textzeile2a = v4Stack.addText(wetterdatenArray[1]+':');
@@ -227,6 +234,8 @@ textzeile5c.font=Font.regularSystemFont(10);
 
 // Widget starten
 widget.presentMedium();
+
+
 
 // Wetterdaten aus Webseiten-Quelltext holen
 function extrahierewetterdaten(html,array) {
