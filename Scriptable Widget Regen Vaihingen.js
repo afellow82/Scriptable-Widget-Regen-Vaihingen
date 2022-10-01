@@ -1,13 +1,9 @@
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: orange; icon-glyph: magic;
-// Variables used by Scriptable.
-// These must be at the very top of the file. Do not edit.
-// icon-color: blue; icon-glyph: umbrella;
-
 //Widget Regen Vaihingen
-//Version 1.46 - 30.09.2022
 //Jens Hamann (j_hamann@gmx.net)
+
+//Version
+const version = 1.47;
+// 01.10.2022
 
 const wetterdatenArray = [];
 
@@ -57,7 +53,7 @@ hStack.layoutHorizontally();
 // Stack "v" für Antwort und Daumen
 let vStack = hStack.addStack();
 vStack.layoutVertically();
-vStack.size = new Size (90,135);
+vStack.size = new Size (90,140);
 //Test vStack.backgroundColor = new Color('aaaaaa');
 
 vStack.addSpacer();
@@ -70,7 +66,7 @@ let antwort = 'Fehler';
 if (ergebnis=='trocken') {antwort = 'Es bleibt trocken.';}
 if (ergebnis=='nass') {antwort = 'Es wird regnen.';}
 let antwortText= antworttextStack.addText(antwort);
-antwortText.font= Font.boldSystemFont(18);
+antwortText.font= Font.boldSystemFont(16);
 antwortText.textColor =  dynColor;
 if (ergebnis=='trocken') {antwortText.textColor =  Color.green();}
 if (ergebnis=='nass') {antwortText.textColor =  Color.red();}
@@ -93,12 +89,19 @@ antwortSymbolBild.tintColor = dynColor;
 if (ergebnis=='trocken') {antwortSymbolBild.tintColor = Color.green();}
 if (ergebnis=='nass') {antwortSymbolBild.tintColor = Color.red();}
 
+//Version einfügen
+vStack.addSpacer(3);
+let versiontext = vStack.addText('     V'+version);
+versiontext.font=Font.thinSystemFont(6);
+versiontext.textColor = Color.blue();
+
 antwortsymbolStack.addSpacer();
 hStack.addSpacer();
 
 // Stack "v3" für Rest in zwei großen Zeilen
 let v3Stack = hStack.addStack();
 v3Stack.layoutVertically();
+//Test v3Stack.backgroundColor = new Color('aaaaaa');
 
 // Stack "h2" für Ort/Datum und Suchsymbol
 let h2Stack = v3Stack.addStack();
@@ -231,6 +234,7 @@ drittespalteStack.addSpacer(2);
 let textzeile5c =drittespalteStack.addText(wetterdatenArray[12]);
 textzeile5c.font=Font.regularSystemFont(10);
 //Test widget.addText(wetterdatenArray[12]);
+
 
 // Widget starten
 widget.presentMedium();
