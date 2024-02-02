@@ -2,8 +2,8 @@
 //Jens Hamann (j_hamann@gmx.net)
 
 //Version
-const version = 1.47;
-// 01.10.2022
+const version = 1.48;
+// 02.02.2024
 
 const wetterdatenArray = [];
 
@@ -311,11 +311,13 @@ return teststring;
 // Textvariante 2: Heute gibt es bis zu 6 Sonnenstunden
 // Textvariante 3: Heute werden bis zu 7 Sonnenstunden
 // Textvariante 4: Die Sonne zeigt sich nur etwa 1 Stunde
+// Textvariante 5: Es gibt bis zu 4 Sonnenstunden
 function extrahieresonnenstunden(html) {
     let text1start = html.indexOf('Die Sonne ist heute fast nicht zu sehen');
     let text2start = html.indexOf('Heute gibt es bis zu ');
     let text3start = html.indexOf('Heute werden bis zu ');
     let text4start = html.indexOf('Die Sonne zeigt sich nur etwa ');
+    let text5start = html.indexOf('Es gibt bis zu ');
     let s = '?'
     
     if (text1start != -1){s = 0}
@@ -334,7 +336,12 @@ function extrahieresonnenstunden(html) {
         let sEnde = html.indexOf('Stunde', text4start);
         s = html.substring(text4start+29, sEnde-1).trim();
     }    
-                                
+
+    if (text5start != -1) {
+        let sEnde = html.indexOf('Sonnenstunden', text5start);
+        s = html.substring(text5start+15, sEnde-1).trim();
+    }                                
+                                                                                                
     return s;
 }
 
