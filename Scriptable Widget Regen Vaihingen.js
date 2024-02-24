@@ -2,8 +2,8 @@
 //Jens Hamann (j_hamann@gmx.net)
 
 //Version
-const version = 1.50;
-// 23.02.2024
+const version = 1.51;
+// 24.02.2024
 
 const wetterdatenArray = [];
 
@@ -313,7 +313,7 @@ return teststring;
 // Textvariante 4: Die Sonne zeigt sich nur etwa 1 Stunde
 // Textvariante 5: Es gibt bis zu 4 Sonnenstunden
 // Textvariante 6: Die Sonne ist fast nicht zu sehen
-// Textvariante 7: 0 Stunden
+// Textvariante 7: 1 Stunde oder X Stunden
 function extrahieresonnenstunden(html) {
     let text1start = html.indexOf('Die Sonne ist heute fast nicht zu sehen');
     let text2start = html.indexOf('Heute gibt es bis zu ');
@@ -321,37 +321,38 @@ function extrahieresonnenstunden(html) {
     let text4start = html.indexOf('Die Sonne zeigt sich nur etwa ');
     let text5start = html.indexOf('Es gibt bis zu ');
     let text6start = html.indexOf('Die Sonne ist fast nicht zu sehen');
-    let text7start = html.indexOf('0 Stunden');
+    let text7start = html.indexOf('der astronomisch möglichen Sonnenscheindauer');
     let s = '?'
     
     if (text1start != -1){s = 0}
     
-    if (text2start != -1) {
+    else if (text2start != -1) {
         let sEnde = html.indexOf('Sonnenstunden', text2start);
         s = html.substring(text2start+21, sEnde-1).trim();
     }
     
-    if (text3start != -1) {
+    else if (text3start != -1) {
         let sEnde = html.indexOf('Sonnenstunden', text3start);
         s = html.substring(text3start+20, sEnde-1).trim();
     }    
 
-    if (text4start != -1) {
+    else if (text4start != -1) {
         let sEnde = html.indexOf('Stunde', text4start);
         s = html.substring(text4start+29, sEnde-1).trim();
     }    
 
-    if (text5start != -1) {
+    else if (text5start != -1) {
         let sEnde = html.indexOf('Sonnenstunden', text5start);
         s = html.substring(text5start+15, sEnde-1).trim();
     }      
     
-    if (text6start != -1) {
+    else if (text6start != -1) {
         s = 0;
     }                                
                                                                                                 
-    if (text7start != -1) {
-        s = 0;
+    else if (text7start != -1) {
+        let sEnde = html.indexOf('Stunde', text7start);
+        s = html.substring(sEnde-3, sEnde-1).trim();
     }      
     
     return s;
