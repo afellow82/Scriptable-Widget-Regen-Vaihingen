@@ -2,8 +2,8 @@
 //Jens Hamann (j_hamann@gmx.net)
 
 //Version
-const version = 1.51;
-// 24.02.2024
+const version = 1.52;
+// 05.06.2025
 
 const wetterdatenArray = [];
 
@@ -279,10 +279,10 @@ function extrahierewetterdaten(html,array) {
     array[10] = html.substring(w10aStart+12, w10Ende).trim();
 
     // Wetterbeschreibung extrahieren
-    let w3start = html.indexOf('text--center delta');
-    let w6start = html.indexOf('text--center delta',w3start+1);
-    let w9start = html.indexOf('text--center delta',w6start+1);
-    let w12start = html.indexOf('text--center delta',w9start+1);
+    let w3start = html.indexOf('"weather-short-text palm-text-clamp"');
+    let w6start = html.indexOf('"weather-short-text palm-text-clamp"',w3start+1);
+    let w9start = html.indexOf('"weather-short-text palm-text-clamp"',w6start+1);
+    let w12start = html.indexOf('"weather-short-text palm-text-clamp"',w9start+1);
     array[3] = wetterbeschreibungextrahieren(w3start);
     array[6] = wetterbeschreibungextrahieren(w6start);
     array[9] = wetterbeschreibungextrahieren(w9start);
@@ -291,7 +291,7 @@ function extrahierewetterdaten(html,array) {
 
 function wetterbeschreibungextrahieren(start) {
 let start2 = html.indexOf('>', start);
-let ende = html.indexOf('</td>', start2);
+let ende = html.indexOf('</div>', start2);
 let teststring = html.substring(start2+1, ende).trim();
 // Kürzung wenn Sonderfall <br />
 test = teststring.includes("<br />");
@@ -301,7 +301,7 @@ if (test == true) {
     let ende2 = teststring.indexOf('<br />');
     teststring = teststring.substring(0, ende2-1).trim()+'…';
 }
-//Test widget.addText(teststring);
+//Test console.log(teststring);
 return teststring;
 }
 
