@@ -7,7 +7,7 @@ const version = "2.00𝛃";
 // 08.05.2026
 
 // ToDo / Bugs / Ideen: 
-// – Umstellung Speicherstruktur auf Objekt
+// – Idee: Umstellung Speicherstruktur auf Objekt
 
 
 const wetterdatenArray = [];
@@ -51,8 +51,10 @@ extrahierewetterdaten(html,wetterdatenArray);
 let sonnenstunden = extrahieresonnenstunden(html);
 let ergebnis = auswertungDaten(wetterdatenArray);
 
-for (i = 1; i < 13; i++) {
-  console.log("wetterdatenArray[" + i + "]: " + wetterdatenArray[i]);
+if (debugLevel > 0) {
+  for (i = 1; i < wetterdatenArray.length; i++) {
+    console.log("wetterdatenArray[" + i + "]: " + wetterdatenArray[i]);
+  }
 }
 
 // hauptStack für Trennung linke und rechte Spalte
@@ -62,25 +64,25 @@ hauptStack.layoutHorizontally();
 // linksStack für Inhalt auf der linken Seite (Antwort und Antwortsymbol)
 let linksStack = hauptStack.addStack();
 linksStack.layoutVertically();
-linksStack.size = new Size(90,0);
+linksStack.size = new Size(85,0);
 colorStack(linksStack, '#8639FF');
 
 linksStack.addSpacer();
 
 // Ausgabe der Antwort auf der linken Seite
 if (ergebnis === "trocken") {
-  antworttextAusgeben(linksStack, "Es bleibt",Color.green());
-  antworttextAusgeben(linksStack, "trocken.",Color.green());
+  antworttextausgeben(linksStack, "Es bleibt",Color.green());
+  antworttextausgeben(linksStack, "trocken.",Color.green());
 } else {
-  antworttextAusgeben(linksStack, "Es wird",Color.red());
-  antworttextAusgeben(linksStack, "regnen.",Color.red());
+  antworttextausgeben(linksStack, "Es wird",Color.red());
+  antworttextausgeben(linksStack, "regnen.",Color.red());
 } 
   
 // Ausgabe Antwortsymbol unter der Antwort auf der linken Seite
 let antwortsymbolStack = linksStack.addStack();
 antwortsymbolStack.layoutHorizontally();
 colorStack(antwortsymbolStack, '#FF0054');
-antwortsymbolStack.addSpacer();
+//antwortsymbolStack.addSpacer();
 
 let antwortSymbol;
 if (ergebnis === "trocken") {
@@ -123,12 +125,11 @@ sonnenstundentext.font=Font.regularSystemFont(12);
 
 sonnenStack.addSpacer();
 
-//hauptStack.addSpacer(10);
 
 // rechtsStack für Inhalte auf der rechten Seite
 let rechtsStack = hauptStack.addStack();
 rechtsStack.layoutVertically();
-rechtsStack.size = new Size(230,0);
+rechtsStack.size = new Size(250,0);
 colorStack(rechtsStack, '#129951');
 
 // Ort und Stand einfügen
@@ -249,19 +250,18 @@ function extrahierewetterdaten(html,array) {
 
 // Funktion Wetterbeschreibungen aus Webseiten-Quelltext holen
 function wetterbeschreibungextrahieren(start) {
-let start2 = html.indexOf('>', start);
-let ende = html.indexOf('</div>', start2);
-let teststring = html.substring(start2+1, ende).trim();
-// Kürzung wenn Sonderfall <br />
-test = teststring.includes("<br />");
-//Test widget.addText(test3.toString());
-//Test widget.addText(teststring3);
-if (test == true) {
+  let start2 = html.indexOf('>', start);
+  let ende = html.indexOf('</div>', start2);
+  let teststring = html.substring(start2+1, ende).trim();
+  // Kürzung wenn Sonderfall <br />
+  test = teststring.includes("<br />");
+
+  if (test == true) {
     let ende2 = teststring.indexOf('<br />');
     teststring = teststring.substring(0, ende2-1).trim()+'…';
-}
-//Test console.log(teststring);
-return teststring;
+  }
+  if (debugLevel > 0) console.log("[wetterbeschreibungextrahieren] teststring: " + teststring);
+  return teststring;
 }
 
 
@@ -317,15 +317,17 @@ function extrahieresonnenstunden(html) {
     return s;
 }
 
+
+// Funktion Auswertung Daten (Ergebnis: trocken oder nass)
 function auswertungDaten(array) {
 	let bewertung='trocken';
 	if (array[2] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	if (array[5] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	if (array[8] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	if (array[11] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
-	//bewertung='nass';
 	return bewertung;
 }
+
 
 // Funktion zum Einfärben von Stacks
 function colorStack(stack, color, level = 2) {
@@ -334,8 +336,9 @@ function colorStack(stack, color, level = 2) {
     }
 }
 
-// Funktion antworttextAusgeben zur Ausgabe der zwei zentrierten Textzeilen
-function antworttextAusgeben(stack, text, color) {
+
+// Funktion antworttextausgeben zur Ausgabe der zwei zentrierten Textzeilen
+function antworttextausgeben(stack, text, color) {
     let zentriert = stack.addStack();
     zentriert.layoutHorizontally();
     zentriert.addSpacer();
@@ -348,13 +351,6 @@ function antworttextAusgeben(stack, text, color) {
     return t;
 }
 
-// Funktion Ausgabe Daten
-function datenausgeben(stack, zeit, regenwahrscheinlichkeit, text) {
-  let zeile1 = stack.addText(zeit + ': ' + regenwahrscheinlichkeit);
-  zeile1.font=Font.regularSystemFont(12);
-  let zeile2 = stack.addText(text);
-  zeile2.font=Font.regularSystemFont(9);
-}
 
 // Funktion Ausgabe Spalte 1
 function spalte1ausgeben(stack, text) {
@@ -365,7 +361,6 @@ function spalte1ausgeben(stack, text) {
   colorStack(formatieren, '#AA4695');
   let t = formatieren.addText(text + ':');
   t.font=Font.regularSystemFont(9);
-  //formatieren.addSpacer();
 }
 
 
@@ -383,6 +378,7 @@ function spalte2ausgeben(stack, text) {
     t.textColor=Color.red();
   }
 }
+
 
 // Funktion Ausgabe Spalte 3
 function spalte3ausgeben(stack, text) {
