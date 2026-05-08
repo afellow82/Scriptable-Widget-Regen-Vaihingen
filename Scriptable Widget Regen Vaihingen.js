@@ -3,7 +3,7 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.00𝛂";
+const version = "2.00𝛃";
 // 08.05.2026
 
 // ToDo / Bugs / Ideen: 
@@ -12,7 +12,7 @@ const version = "2.00𝛂";
 
 const wetterdatenArray = [];
 
-const debugLevel = 2;
+const debugLevel = 0;
 // 0 - Kein Debuggin
 // 1 - Werte loggen
 // 2 - Zusätzlich Stacks einfärben
@@ -48,7 +48,12 @@ widget.backgroundGradient = g;
 
 // Wetterdaten auswerten
 extrahierewetterdaten(html,wetterdatenArray);
+let sonnenstunden = extrahieresonnenstunden(html);
 let ergebnis = auswertungDaten(wetterdatenArray);
+
+for (i = 1; i < 13; i++) {
+  console.log("wetterdatenArray[" + i + "]: " + wetterdatenArray[i]);
+}
 
 // hauptStack für Trennung linke und rechte Spalte
 let hauptStack = widget.addStack();
@@ -57,7 +62,7 @@ hauptStack.layoutHorizontally();
 // linksStack für Inhalt auf der linken Seite (Antwort und Antwortsymbol)
 let linksStack = hauptStack.addStack();
 linksStack.layoutVertically();
-linksStack.size = new Size(100,0);
+linksStack.size = new Size(90,0);
 colorStack(linksStack, '#8639FF');
 
 linksStack.addSpacer();
@@ -71,9 +76,10 @@ if (ergebnis === "trocken") {
   antworttextAusgeben(linksStack, "regnen.",Color.red());
 } 
   
-// Ausgabe Antwortsymbol  
+// Ausgabe Antwortsymbol unter der Antwort auf der linken Seite
 let antwortsymbolStack = linksStack.addStack();
 antwortsymbolStack.layoutHorizontally();
+colorStack(antwortsymbolStack, '#FF0054');
 antwortsymbolStack.addSpacer();
 
 let antwortSymbol;
@@ -97,141 +103,103 @@ if (ergebnis === "trocken") {
 antwortsymbolStack.addSpacer();
 linksStack.addSpacer();
 
-//Version einfügen
-let versionsStack = linksStack.addStack();
-versionsStack.layoutHorizontally();
-versionsStack.addSpacer();
-let versiontext = versionsStack.addText('[V' + version + "]");
-versiontext.font = Font.regularSystemFont(7);;
-versiontext.textColor = Color.darkGray();
-versionsStack.addSpacer();
+// Sonne und Sonnenstunden ausgeben
+let sonnenStack = linksStack.addStack();
+sonnenStack.layoutHorizontally();
+sonnenStack.centerAlignContent();
+colorStack(sonnenStack, '#841930');
 
+sonnenStack.addSpacer();
+
+let sonneSymbol = SFSymbol.named('sun.max');
+let sonneSymbolBild = sonnenStack.addImage(sonneSymbol.image);
+sonneSymbolBild.imageSize = new Size(22, 22);
+sonneSymbolBild.tintColor = Color.yellow();
+
+sonnenStack.addSpacer();
+
+let sonnenstundentext = sonnenStack.addText(sonnenstunden + " h");
+sonnenstundentext.font=Font.regularSystemFont(12);
+
+sonnenStack.addSpacer();
+
+//hauptStack.addSpacer(10);
 
 // rechtsStack für Inhalte auf der rechten Seite
 let rechtsStack = hauptStack.addStack();
 rechtsStack.layoutVertically();
+rechtsStack.size = new Size(230,0);
 colorStack(rechtsStack, '#129951');
 
-// Ort und Datum einfügen
+// Ort und Stand einfügen
 let ortText = rechtsStack.addText('Stuttgart-Vaihingen');
 ortText.font=Font.semiboldSystemFont(12);
-let heute = new Date();
-let stundenaktuell = heute.getHours();
-let stundenaktuelltext = stundenaktuell;
-if (stundenaktuell < 10) {stundenaktuelltext = '0'+ stundenaktuell;}
-let minutenaktuell = heute.getMinutes();
-let minutenaktuelltext = minutenaktuell;
-if (minutenaktuell < 10) {minutenaktuelltext = '0'+ minutenaktuell;}
-let heutetextformat = new DateFormatter();
-heutetextformat.dateFormat= 'dd.MM.yyyy';
-let heutetext2 = "Stand: " + heutetextformat.string(heute) + ' ' + stundenaktuelltext + ':' + minutenaktuelltext + ' Uhr';
-let heutetext3 = rechtsStack.addText(heutetext2);
-heutetext3.font = Font.regularSystemFont(12);
 
-// Stack "v6" für Regenwahrscheinlichkeit und Textspalten
-let v6Stack = rechtsStack.addStack();
-v6Stack.layoutVertically();
-v6Stack.addSpacer();
-let textzeile1 = v6Stack.addText('Regenwahrscheinlichkeit');
+const jetzt = new Date()
+  .toLocaleString("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  })
+  .replace(",","");
+let standtext = rechtsStack.addText("Stand: " + jetzt + ' Uhr');
+standtext.font = Font.regularSystemFont(12);
+
+let textzeile1 = rechtsStack.addText('Regenwahrscheinlichkeiten');
 textzeile1.font= Font.italicSystemFont(8);
 
-// Stack "h4" für Textspalten nebeneinander
-let h4Stack = v6Stack.addStack();
-h4Stack.layoutHorizontally();
+rechtsStack.addSpacer();
 
-// Stack "v4" für erste Textspalte
-let v4Stack = h4Stack.addStack();
-v4Stack.layoutVertically();
-//v4Stack.size = new Size (55,103);
-//Test v4Stack.backgroundColor=new Color('888888');
+let tabelleStack = rechtsStack.addStack();
+tabelleStack.layoutHorizontally();
 
-let textzeile2a = v4Stack.addText(wetterdatenArray[1]+':');
-textzeile2a.font=Font.regularSystemFont(12);
-let textzeile3a = v4Stack.addText(wetterdatenArray[4]+':');
-textzeile3a.font=Font.regularSystemFont(12);
-let textzeile4a = v4Stack.addText(wetterdatenArray[7]+':');
-textzeile4a.font=Font.regularSystemFont(12);
-let textzeile5a = v4Stack.addText(wetterdatenArray[10]+':');
-textzeile5a.font=Font.regularSystemFont(12);
-v4Stack.addSpacer(6);
-let sonneSymbol = SFSymbol.named('sun.max');
-let sonneSymbolBild = v4Stack.addImage(sonneSymbol.image);
-sonneSymbolBild.imageSize = new Size(22, 22);
-sonneSymbolBild.tintColor = Color.yellow();
+let spalte1Stack = tabelleStack.addStack();
+spalte1Stack.layoutVertically();
+spalte1ausgeben(spalte1Stack, wetterdatenArray[1]);
+spalte1ausgeben(spalte1Stack, wetterdatenArray[4]);
+spalte1ausgeben(spalte1Stack, wetterdatenArray[7]);
+spalte1ausgeben(spalte1Stack, wetterdatenArray[10]);
 
-// Stack "v5" für zweite Textspalte
-let v5Stack = h4Stack.addStack();
-v5Stack.layoutVertically();
-//Test v5Stack.backgroundColor=new Color('888888');
-v5Stack.setPadding(0, 0, 0, 0)
-//v5Stack.size=new Size(40, 98)
+let spalte2Stack = tabelleStack.addStack();
+spalte2Stack.layoutVertically();
+spalte2Stack.size = new Size(45,0);
 
-// Stack "h5" für erste Textzeile rechtsbündig
-let h5Stack = v5Stack.addStack();
-h5Stack.layoutHorizontally();
-h5Stack.addSpacer();
-let textzeile2b = h5Stack.addText(wetterdatenArray[2]+'%');
-textzeile2b.font=Font.regularSystemFont(12);
-if (wetterdatenArray[2]>= grenzwertRegenwahrscheinlichkeit) {textzeile2b.textColor=Color.red();}
-// Stack "h6" für zweite Textzeile rechtsbündig
-let h6Stack = v5Stack.addStack();
-h6Stack.layoutHorizontally();
-h6Stack.addSpacer();
-let textzeile3b = h6Stack.addText(wetterdatenArray[5]+'%');
-textzeile3b.font=Font.regularSystemFont(12);
-if (wetterdatenArray[5]>= grenzwertRegenwahrscheinlichkeit) {textzeile3b.textColor=Color.red();}
-// Stack "h7" für dritte Textzeile rechtsbündig
-let h7Stack = v5Stack.addStack();
-h7Stack.layoutHorizontally();
-h7Stack.addSpacer();
-let textzeile4b = h7Stack.addText(wetterdatenArray[8]+'%');
-textzeile4b.font=Font.regularSystemFont(12);
-if (wetterdatenArray[8]>= grenzwertRegenwahrscheinlichkeit) {textzeile4b.textColor=Color.red();}
-// Stack "h8" für vierte Textzeile rechtsbündig
-let h8Stack = v5Stack.addStack();
-h8Stack.layoutHorizontally();
-h8Stack.addSpacer();
-let textzeile5b = h8Stack.addText(wetterdatenArray[11]+'%');
-textzeile5b.font=Font.regularSystemFont(12);
-if (wetterdatenArray[11]>= grenzwertRegenwahrscheinlichkeit) {textzeile5b.textColor=Color.red();}
-v5Stack.addSpacer(8);
-// Stack "h9" für fünfte Textzeile rechtsbündig
-let h9Stack = v5Stack.addStack();
-h9Stack.layoutHorizontally();
-h9Stack.addSpacer();
-let sonnenstunden = extrahieresonnenstunden(html);
-let textzeile6b = h9Stack.addText(sonnenstunden+' h');
-textzeile6b.font=Font.regularSystemFont(12);
+spalte2ausgeben(spalte2Stack, wetterdatenArray[2]);
+spalte2ausgeben(spalte2Stack, wetterdatenArray[5]);
+spalte2ausgeben(spalte2Stack, 100);
+spalte2ausgeben(spalte2Stack, wetterdatenArray[11]);
 
-h4Stack.addSpacer(3);
+tabelleStack.addSpacer(4);
 
-// Stack "drittespalte" für dritte Textspalte
-//Längster Text bisher: "leichter Regenschauer"
-let drittespalteStack = h4Stack.addStack();
-drittespalteStack.layoutVertically();
-//drittespalteStack.size = new Size(120,75);
-//Test drittespalteStack.backgroundColor=new Color('777777');
+let spalte3Stack = tabelleStack.addStack();
+spalte3Stack.layoutVertically();
 
-let textzeile2c =drittespalteStack.addText(wetterdatenArray[3]);
-textzeile2c.font=Font.regularSystemFont(10);
-drittespalteStack.addSpacer(2);
-let textzeile3c =drittespalteStack.addText(wetterdatenArray[6]);
-textzeile3c.font=Font.regularSystemFont(10);
-drittespalteStack.addSpacer(2);
-let textzeile4c =drittespalteStack.addText(wetterdatenArray[9]);
-textzeile4c.font=Font.regularSystemFont(10);
-drittespalteStack.addSpacer(2);
-let textzeile5c =drittespalteStack.addText(wetterdatenArray[12]);
-textzeile5c.font=Font.regularSystemFont(10);
-//Test widget.addText(wetterdatenArray[12]);
+spalte3ausgeben(spalte3Stack, wetterdatenArray[3]);
+spalte3ausgeben(spalte3Stack, wetterdatenArray[6]);
+spalte3ausgeben(spalte3Stack, wetterdatenArray[9]);
+spalte3ausgeben(spalte3Stack, wetterdatenArray[12]);
+
+rechtsStack.addSpacer();
+
+//Version ausgeben
+let versionsStack = rechtsStack.addStack();
+versionsStack.layoutHorizontally();
+versionsStack.addSpacer();
+colorStack(versionsStack, '#636363');
+let versiontext = versionsStack.addText('[V' + version + "]");
+versiontext.font = Font.regularSystemFont(7);
+versiontext.textColor = Color.darkGray();
+versionsStack.addSpacer(10);
+
 
 
 // Widget starten
 widget.presentMedium();
 
 
-
-// Wetterdaten aus Webseiten-Quelltext holen
+// Funktion Wetterdaten aus Webseiten-Quelltext holen
 function extrahierewetterdaten(html,array) {
     let w2Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge');
     let w2aStart = html.indexOf('<span class="">', w2Start);
@@ -249,7 +217,6 @@ function extrahierewetterdaten(html,array) {
     let w11aStart = html.indexOf('<span class="">', w11Start);
     let w11Ende = html.indexOf('&#8239;', w11aStart);
     array[11] = html.substring(w11aStart+15, w11Ende).trim();
-    //Test array[11] =100;
     
     let w1Start = html.indexOf('elta text--center');
     let w1aStart = html.indexOf('text--bold">', w1Start);
@@ -279,6 +246,8 @@ function extrahierewetterdaten(html,array) {
     array[12] = wetterbeschreibungextrahieren(w12start);
 }
 
+
+// Funktion Wetterbeschreibungen aus Webseiten-Quelltext holen
 function wetterbeschreibungextrahieren(start) {
 let start2 = html.indexOf('>', start);
 let ende = html.indexOf('</div>', start2);
@@ -296,7 +265,7 @@ return teststring;
 }
 
 
-// Sonnenstunden aus Webseiten-Quelltext holen
+// Funktion Sonnenstunden aus Webseiten-Quelltext holen
 // Textvariante 1: Die Sonne ist heute fast nicht zu sehen
 // Textvariante 2: Heute gibt es bis zu 6 Sonnenstunden
 // Textvariante 3: Heute werden bis zu 7 Sonnenstunden
@@ -367,12 +336,61 @@ function colorStack(stack, color, level = 2) {
 
 // Funktion antworttextAusgeben zur Ausgabe der zwei zentrierten Textzeilen
 function antworttextAusgeben(stack, text, color) {
-    let zentriertstack = stack.addStack();
-    zentriertstack.layoutHorizontally();
-    zentriertstack.addSpacer();
-    const t = zentriertstack.addText(text);
+    let zentriert = stack.addStack();
+    zentriert.layoutHorizontally();
+    zentriert.addSpacer();
+    zentriert.size = new Size(0,18);
+    colorStack(zentriert, '#113311');
+    const t = zentriert.addText(text);
     t.font = Font.boldSystemFont(16);
     t.textColor =  color;
-    zentriertstack.addSpacer();
+    zentriert.addSpacer();
     return t;
+}
+
+// Funktion Ausgabe Daten
+function datenausgeben(stack, zeit, regenwahrscheinlichkeit, text) {
+  let zeile1 = stack.addText(zeit + ': ' + regenwahrscheinlichkeit);
+  zeile1.font=Font.regularSystemFont(12);
+  let zeile2 = stack.addText(text);
+  zeile2.font=Font.regularSystemFont(9);
+}
+
+// Funktion Ausgabe Spalte 1
+function spalte1ausgeben(stack, text) {
+  let formatieren = stack.addStack();
+  formatieren.layoutHorizontally();
+  formatieren.size = new Size(0,22);
+  formatieren.centerAlignContent();
+  colorStack(formatieren, '#AA4695');
+  let t = formatieren.addText(text + ':');
+  t.font=Font.regularSystemFont(9);
+  //formatieren.addSpacer();
+}
+
+
+// Funktion Ausgabe Spalte 2
+function spalte2ausgeben(stack, text) {
+  let rechtsbuendig = stack.addStack();
+  rechtsbuendig.layoutHorizontally();
+  rechtsbuendig.size = new Size(0,22);
+  rechtsbuendig.centerAlignContent();
+  rechtsbuendig.addSpacer();
+  colorStack(rechtsbuendig, '#2496a1');
+  let t = rechtsbuendig.addText(text + '%');
+  t.font=Font.boldSystemFont(12);
+  if (text >= grenzwertRegenwahrscheinlichkeit) {
+    t.textColor=Color.red();
+  }
+}
+
+// Funktion Ausgabe Spalte 3
+function spalte3ausgeben(stack, text) {
+  let formatieren = stack.addStack();
+  formatieren.layoutHorizontally();
+  formatieren.size = new Size(0,22);
+  formatieren.centerAlignContent();
+  colorStack(formatieren, '#68391A');
+  let t = formatieren.addText(text);
+  t.font=Font.regularSystemFont(9);
 }
