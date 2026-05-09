@@ -11,6 +11,7 @@ const version = "2.00𝛅";
 // - Verbesserung: let -> const
 // - Verbesserung: logDebub
 // - Funktion Sonnenstunden mit Regex vereinfachen
+// - ToDo: Auskommentierte Zeilen löschen
 
 
 const wetterdaten = [];
@@ -363,13 +364,27 @@ function extrahieresonnenstunden(html) {
 
 
 // Funktion Auswertung Daten (Ergebnis: trocken oder nass)
-function auswertungDaten(array) {
+/**
+  function auswertungDaten(array) {
 	let bewertung='trocken';
 	if (array[2] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	if (array[5] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	if (array[8] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	if (array[11] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
 	return bewertung;
+}
+**/
+function auswertungDaten(wetterdaten) {
+
+  for (const eintrag of wetterdaten) {
+
+    if (eintrag.regenwahrscheinlichkeit >= grenzwertRegenwahrscheinlichkeit) {
+      return 'nass';
+    }
+
+  }
+
+  return 'trocken';
 }
 
 
