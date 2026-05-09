@@ -3,20 +3,17 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.00𝛄";
+const version = "2.00𝛅";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
-// – Verbesserung: Umstellung Speicherstruktur auf Objekt
 // - Idee: Evtl. Wettertext nicht abschneiden
-// - Verbesserung: Schelifen für Ausgabe-Funktionen
 // - Verbesserung: let -> const
 // - Verbesserung: logDebub
 // - Funktion Sonnenstunden mit Regex vereinfachen
-// - Idee: Umstellung auf komplett englisch
 
 
-const wetterdatenArray = [];
+const wetterdaten = [];
 
 const debugLevel = 1;
 // 0 - Kein Debuggin
@@ -53,14 +50,14 @@ widget.url = 'https://www.wetter.com/deutschland/stuttgart/vaihingen/DE001028710
 widget.backgroundGradient = g;
 
 // Wetterdaten auswerten
-extrahierewetterdaten(html,wetterdatenArray);
+extrahierewetterdaten(html,wetterdaten);
 let sonnenstunden = extrahieresonnenstunden(html);
-let ergebnis = auswertungDaten(wetterdatenArray);
+let ergebnis = auswertungDaten(wetterdaten);
 
-if (debugLevel > 0) {
-  for (let i = 1; i < wetterdatenArray.length; i++) {
-    console.log("wetterdatenArray[" + i + "]: " + wetterdatenArray[i]);
-  }
+for (const eintrag of wetterdaten) {
+  console.log(
+    `${eintrag.tageszeit} | ${eintrag.regenwahrscheinlichkeit} % | ${eintrag.wetterbeschreibung}`
+  );
 }
 
 // hauptStack für Trennung linke und rechte Spalte
@@ -166,29 +163,45 @@ tabelleStack.layoutHorizontally();
 
 let spalte1Stack = tabelleStack.addStack();
 spalte1Stack.layoutVertically();
+
+for (const eintrag of wetterdaten) {
+  spalte1ausgeben(spalte1Stack, eintrag.tageszeit);
+}
+/**
 spalte1ausgeben(spalte1Stack, wetterdatenArray[1]);
 spalte1ausgeben(spalte1Stack, wetterdatenArray[4]);
 spalte1ausgeben(spalte1Stack, wetterdatenArray[7]);
 spalte1ausgeben(spalte1Stack, wetterdatenArray[10]);
+**/
 
 let spalte2Stack = tabelleStack.addStack();
 spalte2Stack.layoutVertically();
 spalte2Stack.size = new Size(45,0);
 
+for (const eintrag of wetterdaten) {
+  spalte2ausgeben(spalte2Stack, eintrag.regenwahrscheinlichkeit);
+}
+/**
 spalte2ausgeben(spalte2Stack, wetterdatenArray[2]);
 spalte2ausgeben(spalte2Stack, wetterdatenArray[5]);
 spalte2ausgeben(spalte2Stack, wetterdatenArray[8]);
 spalte2ausgeben(spalte2Stack, wetterdatenArray[11]);
+**/
 
 tabelleStack.addSpacer(4);
 
 let spalte3Stack = tabelleStack.addStack();
 spalte3Stack.layoutVertically();
 
+for (const eintrag of wetterdaten) {
+  spalte3ausgeben(spalte3Stack, eintrag.wetterbeschreibung);
+}
+/**
 spalte3ausgeben(spalte3Stack, wetterdatenArray[3]);
 spalte3ausgeben(spalte3Stack, wetterdatenArray[6]);
 spalte3ausgeben(spalte3Stack, wetterdatenArray[9]);
 spalte3ausgeben(spalte3Stack, wetterdatenArray[12]);
+**/
 
 rechtsStack.addSpacer();
 
@@ -215,46 +228,67 @@ function extrahierewetterdaten(html,array) {
     let w2Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge');
     let w2aStart = html.indexOf('<span class="">', w2Start);
     let w2Ende = html.indexOf('&#8239;', w2aStart);
-    array[2] = html.substring(w2aStart+15, w2Ende).trim();
+    //array[2] = html.substring(w2aStart+15, w2Ende).trim();
     let w5Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w2Start+1);
     let w5aStart = html.indexOf('<span class="">', w5Start);
     let w5Ende = html.indexOf('&#8239;', w5aStart);
-    array[5] = html.substring(w5aStart+15, w5Ende).trim();
+    //array[5] = html.substring(w5aStart+15, w5Ende).trim();
     let w8Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w5Start+1);
     let w8aStart = html.indexOf('<span class="">', w8Start);
     let w8Ende = html.indexOf('&#8239;', w8aStart);
-    array[8] = html.substring(w8aStart+15, w8Ende).trim();
+    //array[8] = html.substring(w8aStart+15, w8Ende).trim();
     let w11Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w8Start+1);
     let w11aStart = html.indexOf('<span class="">', w11Start);
     let w11Ende = html.indexOf('&#8239;', w11aStart);
-    array[11] = html.substring(w11aStart+15, w11Ende).trim();
+    //array[11] = html.substring(w11aStart+15, w11Ende).trim();
     
     let w1Start = html.indexOf('elta text--center');
     let w1aStart = html.indexOf('text--bold">', w1Start);
     let w1Ende = html.indexOf('</div>', w1aStart);
-    array[1] = html.substring(w1aStart+12, w1Ende).trim();
+    //array[1] = html.substring(w1aStart+12, w1Ende).trim();
     let w4Start = html.indexOf('elta text--center',w1Start+1);
     let w4aStart = html.indexOf('text--bold">', w4Start);
     let w4Ende = html.indexOf('</div>', w4aStart);
-    array[4] = html.substring(w4aStart+12, w4Ende).trim();
+    //array[4] = html.substring(w4aStart+12, w4Ende).trim();
     let w7Start = html.indexOf('elta text--center',w4Start+1);
     let w7aStart = html.indexOf('text--bold">', w7Start);
     let w7Ende = html.indexOf('</div>', w7aStart);
-    array[7] = html.substring(w7aStart+12, w7Ende).trim();
+    //array[7] = html.substring(w7aStart+12, w7Ende).trim();
     let w10Start = html.indexOf('elta text--center',w7Start+1);
     let w10aStart = html.indexOf('text--bold">', w10Start);
     let w10Ende = html.indexOf('</div>', w10aStart);
-    array[10] = html.substring(w10aStart+12, w10Ende).trim();
+    //array[10] = html.substring(w10aStart+12, w10Ende).trim();
 
     // Wetterbeschreibung extrahieren
     let w3start = html.indexOf('"weather-short-text palm-text-clamp"');
     let w6start = html.indexOf('"weather-short-text palm-text-clamp"',w3start+1);
     let w9start = html.indexOf('"weather-short-text palm-text-clamp"',w6start+1);
     let w12start = html.indexOf('"weather-short-text palm-text-clamp"',w9start+1);
-    array[3] = wetterbeschreibungextrahieren(html, w3start);
-    array[6] = wetterbeschreibungextrahieren(html, w6start);
-    array[9] = wetterbeschreibungextrahieren(html, w9start);
-    array[12] = wetterbeschreibungextrahieren(html, w12start);
+    //array[3] = wetterbeschreibungextrahieren(html, w3start);
+    //array[6] = wetterbeschreibungextrahieren(html, w6start);
+    //array[9] = wetterbeschreibungextrahieren(html, w9start);
+    //array[12] = wetterbeschreibungextrahieren(html, w12start);
+    
+    array.push({
+      tageszeit: html.substring(w1aStart+12, w1Ende).trim(),
+      regenwahrscheinlichkeit: parseInt(html.substring(w2aStart+15, w2Ende).trim()),
+      wetterbeschreibung: wetterbeschreibungextrahieren(html, w3start)
+    });
+    array.push({
+      tageszeit: html.substring(w4aStart+12, w4Ende).trim(),
+      regenwahrscheinlichkeit: parseInt(html.substring(w5aStart+15, w5Ende).trim()),
+      wetterbeschreibung: wetterbeschreibungextrahieren(html, w6start)
+    });
+    array.push({
+      tageszeit: html.substring(w7aStart+12, w7Ende).trim(),
+      regenwahrscheinlichkeit: parseInt(html.substring(w8aStart+15, w8Ende).trim()),
+      wetterbeschreibung: wetterbeschreibungextrahieren(html, w9start)
+    });
+    array.push({
+      tageszeit: html.substring(w10aStart+12, w10Ende).trim(),
+      regenwahrscheinlichkeit: parseInt(html.substring(w11aStart+15, w11Ende).trim()),
+      wetterbeschreibung: wetterbeschreibungextrahieren(html, w12start)
+    });
 }
 
 
