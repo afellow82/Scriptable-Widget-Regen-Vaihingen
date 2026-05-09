@@ -3,15 +3,12 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.00𝛅";
+const version = "2.00𝛆";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
 // - Idee: Evtl. Wettertext nicht abschneiden
-// - Verbesserung: let -> const
-// - Verbesserung: logDebub
 // - Funktion Sonnenstunden mit Regex vereinfachen
-// - ToDo: Auskommentierte Zeilen löschen
 
 
 const wetterdaten = [];
@@ -22,51 +19,52 @@ const debugLevel = 1;
 // 2 - Zusätzlich Stacks einfärben
 
 // Definition Grenzwert für Regenwahrscheinlichkeit
-let grenzwertRegenwahrscheinlichkeit = 50;
+const grenzwertRegenwahrscheinlichkeit = 50;
 
 // Definition Farbschema für Symbole und Text
-let lightColor = Color.black();
-let darkColor = Color.white();
-let dynColor = Color.dynamic(lightColor, darkColor);
+const lightColor = Color.black();
+const darkColor = Color.white();
+const dynColor = Color.dynamic(lightColor, darkColor);
 
 // Färbung Hintergrund
-let hghelloben = new Color('#D8F6CE');
-let hghellunten = new Color('#CEECF5');
-let hgdunkel = Color.black();
-let hgfarbeoben = Color.dynamic(hghelloben, hgdunkel);
-let hgfarbeunten = Color.dynamic(hghellunten, hgdunkel);
-let g = new LinearGradient();
+const hghelloben = new Color('#D8F6CE');
+const hghellunten = new Color('#CEECF5');
+const hgdunkel = Color.black();
+const hgfarbeoben = Color.dynamic(hghelloben, hgdunkel);
+const hgfarbeunten = Color.dynamic(hghellunten, hgdunkel);
+const g = new LinearGradient();
 g.locations = [0,1];
 g.colors = [hgfarbeoben, hgfarbeunten];
 
 // HTML-Quelltext der Anzeigenseite abrufen
 const url = 'https://www.wetter.com/deutschland/stuttgart/vaihingen/DE0010287103.html';
-let req = new Request(url);
-let html = await req.loadString();
+const req = new Request(url);
+const html = await req.loadString();
 
 // Widget initialisieren
-let widget = new ListWidget();
+const widget = new ListWidget();
 widget.setPadding(5, 5, 5, 5);
 widget.url = 'https://www.wetter.com/deutschland/stuttgart/vaihingen/DE0010287103.html';
 widget.backgroundGradient = g;
 
 // Wetterdaten auswerten
 extrahierewetterdaten(html,wetterdaten);
-let sonnenstunden = extrahieresonnenstunden(html);
-let ergebnis = auswertungDaten(wetterdaten);
+const sonnenstunden = extrahieresonnenstunden(html);
+const ergebnis = auswertungDaten(wetterdaten);
 
+logDivider(1);
 for (const eintrag of wetterdaten) {
   console.log(
-    `${eintrag.tageszeit} | ${eintrag.regenwahrscheinlichkeit} % | ${eintrag.wetterbeschreibung}`
+    `${eintrag.tageszeit} | ${eintrag.regenwahrscheinlichkeit}% | ${eintrag.wetterbeschreibung}`
   );
 }
 
 // hauptStack für Trennung linke und rechte Spalte
-let hauptStack = widget.addStack();
+const hauptStack = widget.addStack();
 hauptStack.layoutHorizontally();
 
 // linksStack für Inhalt auf der linken Seite (Antwort und Antwortsymbol)
-let linksStack = hauptStack.addStack();
+const linksStack = hauptStack.addStack();
 linksStack.layoutVertically();
 linksStack.size = new Size(85,0);
 colorStack(linksStack, '#8639FF');
@@ -83,20 +81,18 @@ if (ergebnis === "trocken") {
 } 
   
 // Ausgabe Antwortsymbol unter der Antwort auf der linken Seite
-let antwortsymbolStack = linksStack.addStack();
+const antwortsymbolStack = linksStack.addStack();
 antwortsymbolStack.layoutHorizontally();
 colorStack(antwortsymbolStack, '#FF0054');
 
-let antwortSymbol;
-if (ergebnis === "trocken") {
-  antwortSymbol = SFSymbol.named('hand.thumbsup');
-} else {
-  antwortSymbol = SFSymbol.named('umbrella.fill');
-} 
+const antwortSymbol =
+  ergebnis === "trocken"
+    ? SFSymbol.named('hand.thumbsup')
+    : SFSymbol.named('umbrella.fill');
 
 antwortsymbolStack.addSpacer();
 
-let antwortSymbolBild = antwortsymbolStack.addImage(antwortSymbol.image);
+const antwortSymbolBild = antwortsymbolStack.addImage(antwortSymbol.image);
 antwortSymbolBild.imageSize = new Size(70, 70);
 
 if (ergebnis === "trocken") {
@@ -109,15 +105,15 @@ antwortsymbolStack.addSpacer();
 linksStack.addSpacer();
 
 // Sonne und Sonnenstunden ausgeben
-let sonnenStack = linksStack.addStack();
+const sonnenStack = linksStack.addStack();
 sonnenStack.layoutHorizontally();
 sonnenStack.centerAlignContent();
 colorStack(sonnenStack, '#841930');
 
 sonnenStack.addSpacer();
 
-let sonneSymbol = SFSymbol.named('sun.max');
-let sonneSymbolBild = sonnenStack.addImage(sonneSymbol.image);
+const sonneSymbol = SFSymbol.named('sun.max');
+const sonneSymbolBild = sonnenStack.addImage(sonneSymbol.image);
 sonneSymbolBild.imageSize = new Size(22, 22);
 sonneSymbolBild.tintColor = Color.yellow();
 
@@ -127,19 +123,19 @@ if (sonnenstunden > 9) {
   sonnenStack.addSpacer(5);
 }
 
-let sonnenstundentext = sonnenStack.addText(sonnenstunden + " Std.");
+const sonnenstundentext = sonnenStack.addText(sonnenstunden + " Std.");
 sonnenstundentext.font=Font.boldSystemFont(12);
 
 sonnenStack.addSpacer();
 
 // rechtsStack für Inhalte auf der rechten Seite
-let rechtsStack = hauptStack.addStack();
+const rechtsStack = hauptStack.addStack();
 rechtsStack.layoutVertically();
 rechtsStack.size = new Size(250,0);
 colorStack(rechtsStack, '#129951');
 
 // Ort und Stand einfügen
-let ortText = rechtsStack.addText('Stuttgart-Vaihingen');
+const ortText = rechtsStack.addText('Stuttgart-Vaihingen');
 ortText.font=Font.semiboldSystemFont(12);
 
 const jetzt = new Date()
@@ -151,67 +147,49 @@ const jetzt = new Date()
     minute: "2-digit"
   })
   .replace(",","");
-let standtext = rechtsStack.addText("Stand: " + jetzt + ' Uhr');
+const standtext = rechtsStack.addText("Stand: " + jetzt + ' Uhr');
 standtext.font = Font.regularSystemFont(12);
 
-let textzeile1 = rechtsStack.addText('Regenwahrscheinlichkeiten');
+const textzeile1 = rechtsStack.addText('Regenwahrscheinlichkeiten');
 textzeile1.font= Font.italicSystemFont(8);
 
 rechtsStack.addSpacer();
 
-let tabelleStack = rechtsStack.addStack();
+const tabelleStack = rechtsStack.addStack();
 tabelleStack.layoutHorizontally();
 
-let spalte1Stack = tabelleStack.addStack();
+const spalte1Stack = tabelleStack.addStack();
 spalte1Stack.layoutVertically();
 
 for (const eintrag of wetterdaten) {
   spalte1ausgeben(spalte1Stack, eintrag.tageszeit);
 }
-/**
-spalte1ausgeben(spalte1Stack, wetterdatenArray[1]);
-spalte1ausgeben(spalte1Stack, wetterdatenArray[4]);
-spalte1ausgeben(spalte1Stack, wetterdatenArray[7]);
-spalte1ausgeben(spalte1Stack, wetterdatenArray[10]);
-**/
 
-let spalte2Stack = tabelleStack.addStack();
+const spalte2Stack = tabelleStack.addStack();
 spalte2Stack.layoutVertically();
 spalte2Stack.size = new Size(45,0);
 
 for (const eintrag of wetterdaten) {
   spalte2ausgeben(spalte2Stack, eintrag.regenwahrscheinlichkeit);
 }
-/**
-spalte2ausgeben(spalte2Stack, wetterdatenArray[2]);
-spalte2ausgeben(spalte2Stack, wetterdatenArray[5]);
-spalte2ausgeben(spalte2Stack, wetterdatenArray[8]);
-spalte2ausgeben(spalte2Stack, wetterdatenArray[11]);
-**/
 
 tabelleStack.addSpacer(4);
 
-let spalte3Stack = tabelleStack.addStack();
+const spalte3Stack = tabelleStack.addStack();
 spalte3Stack.layoutVertically();
 
 for (const eintrag of wetterdaten) {
   spalte3ausgeben(spalte3Stack, eintrag.wetterbeschreibung);
 }
-/**
-spalte3ausgeben(spalte3Stack, wetterdatenArray[3]);
-spalte3ausgeben(spalte3Stack, wetterdatenArray[6]);
-spalte3ausgeben(spalte3Stack, wetterdatenArray[9]);
-spalte3ausgeben(spalte3Stack, wetterdatenArray[12]);
-**/
 
 rechtsStack.addSpacer();
 
 //Version ausgeben
-let versionsStack = rechtsStack.addStack();
+const versionsStack = rechtsStack.addStack();
 versionsStack.layoutHorizontally();
 versionsStack.addSpacer();
 colorStack(versionsStack, '#636363');
-let versiontext = versionsStack.addText('[V' + version + "]");
+const versiontext = versionsStack.addText('[V' + version + "]");
 versiontext.font = Font.regularSystemFont(7);
 versiontext.textColor = Color.darkGray();
 versionsStack.addSpacer(10);
@@ -223,52 +201,47 @@ if (!config.runsInWidget) {
   widget.presentMedium();
 }
 
+Script.setWidget(widget);
+Script.complete();
 
 // Funktion Wetterdaten aus Webseiten-Quelltext holen
 function extrahierewetterdaten(html,array) {
-    let w2Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge');
-    let w2aStart = html.indexOf('<span class="">', w2Start);
-    let w2Ende = html.indexOf('&#8239;', w2aStart);
-    //array[2] = html.substring(w2aStart+15, w2Ende).trim();
-    let w5Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w2Start+1);
-    let w5aStart = html.indexOf('<span class="">', w5Start);
-    let w5Ende = html.indexOf('&#8239;', w5aStart);
-    //array[5] = html.substring(w5aStart+15, w5Ende).trim();
-    let w8Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w5Start+1);
-    let w8aStart = html.indexOf('<span class="">', w8Start);
-    let w8Ende = html.indexOf('&#8239;', w8aStart);
-    //array[8] = html.substring(w8aStart+15, w8Ende).trim();
-    let w11Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w8Start+1);
-    let w11aStart = html.indexOf('<span class="">', w11Start);
-    let w11Ende = html.indexOf('&#8239;', w11aStart);
-    //array[11] = html.substring(w11aStart+15, w11Ende).trim();
+    const w2Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge');
+    const w2aStart = html.indexOf('<span class="">', w2Start);
+    const w2Ende = html.indexOf('&#8239;', w2aStart);
     
-    let w1Start = html.indexOf('elta text--center');
-    let w1aStart = html.indexOf('text--bold">', w1Start);
-    let w1Ende = html.indexOf('</div>', w1aStart);
-    //array[1] = html.substring(w1aStart+12, w1Ende).trim();
-    let w4Start = html.indexOf('elta text--center',w1Start+1);
-    let w4aStart = html.indexOf('text--bold">', w4Start);
-    let w4Ende = html.indexOf('</div>', w4aStart);
-    //array[4] = html.substring(w4aStart+12, w4Ende).trim();
-    let w7Start = html.indexOf('elta text--center',w4Start+1);
-    let w7aStart = html.indexOf('text--bold">', w7Start);
-    let w7Ende = html.indexOf('</div>', w7aStart);
-    //array[7] = html.substring(w7aStart+12, w7Ende).trim();
-    let w10Start = html.indexOf('elta text--center',w7Start+1);
-    let w10aStart = html.indexOf('text--bold">', w10Start);
-    let w10Ende = html.indexOf('</div>', w10aStart);
-    //array[10] = html.substring(w10aStart+12, w10Ende).trim();
+    const w5Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w2Start+1);
+    const w5aStart = html.indexOf('<span class="">', w5Start);
+    const w5Ende = html.indexOf('&#8239;', w5aStart);
+    
+    const w8Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w5Start+1);
+    const w8aStart = html.indexOf('<span class="">', w8Start);
+    const w8Ende = html.indexOf('&#8239;', w8aStart);
+    
+    const w11Start = html.indexOf('Niederschlagswahrscheinlichkeit und Niederschlagsmenge',w8Start+1);
+    const w11aStart = html.indexOf('<span class="">', w11Start);
+    const w11Ende = html.indexOf('&#8239;', w11aStart);
+    
+    const w1Start = html.indexOf('elta text--center');
+    const w1aStart = html.indexOf('text--bold">', w1Start);
+    const w1Ende = html.indexOf('</div>', w1aStart);
+    
+    const w4Start = html.indexOf('elta text--center',w1Start+1);
+    const w4aStart = html.indexOf('text--bold">', w4Start);
+    const w4Ende = html.indexOf('</div>', w4aStart);
 
-    // Wetterbeschreibung extrahieren
-    let w3start = html.indexOf('"weather-short-text palm-text-clamp"');
-    let w6start = html.indexOf('"weather-short-text palm-text-clamp"',w3start+1);
-    let w9start = html.indexOf('"weather-short-text palm-text-clamp"',w6start+1);
-    let w12start = html.indexOf('"weather-short-text palm-text-clamp"',w9start+1);
-    //array[3] = wetterbeschreibungextrahieren(html, w3start);
-    //array[6] = wetterbeschreibungextrahieren(html, w6start);
-    //array[9] = wetterbeschreibungextrahieren(html, w9start);
-    //array[12] = wetterbeschreibungextrahieren(html, w12start);
+    const w7Start = html.indexOf('elta text--center',w4Start+1);
+    const w7aStart = html.indexOf('text--bold">', w7Start);
+    const w7Ende = html.indexOf('</div>', w7aStart);
+
+    const w10Start = html.indexOf('elta text--center',w7Start+1);
+    const w10aStart = html.indexOf('text--bold">', w10Start);
+    const w10Ende = html.indexOf('</div>', w10aStart);
+
+    const w3start = html.indexOf('"weather-short-text palm-text-clamp"');
+    const w6start = html.indexOf('"weather-short-text palm-text-clamp"',w3start+1);
+    const w9start = html.indexOf('"weather-short-text palm-text-clamp"',w6start+1);
+    const w12start = html.indexOf('"weather-short-text palm-text-clamp"',w9start+1);
     
     array.push({
       tageszeit: html.substring(w1aStart+12, w1Ende).trim(),
@@ -295,17 +268,17 @@ function extrahierewetterdaten(html,array) {
 
 // Funktion Wetterbeschreibungen aus Webseiten-Quelltext holen
 function wetterbeschreibungextrahieren(html, start) {
-  let start2 = html.indexOf('>', start);
-  let ende = html.indexOf('</div>', start2);
-  let teststring = html.substring(start2+1, ende).trim();
+  const start2 = html.indexOf('>', start);
+  const ende = html.indexOf('</div>', start2);
+  const teststring = html.substring(start2+1, ende).trim();
   // Kürzung wenn Sonderfall <br />
-  let test = teststring.includes("<br />");
+  const test = teststring.includes("<br />");
 
   if (test) {
-    let ende2 = teststring.indexOf('<br />');
+    const ende2 = teststring.indexOf('<br />');
     teststring = teststring.substring(0, ende2-1).trim()+'…';
   }
-  if (debugLevel > 0) console.log("[wetterbeschreibungextrahieren] teststring: " + teststring);
+  debugLog(1, "[wetterbeschreibungextrahieren] teststring: " + teststring);
   return teststring;
 }
 
@@ -319,34 +292,34 @@ function wetterbeschreibungextrahieren(html, start) {
 // Textvariante 6: Die Sonne ist fast nicht zu sehen
 // Textvariante 7: 1 Stunde oder X Stunden
 function extrahieresonnenstunden(html) {
-    let text1start = html.indexOf('Die Sonne ist heute fast nicht zu sehen');
-    let text2start = html.indexOf('Heute gibt es bis zu ');
-    let text3start = html.indexOf('Heute werden bis zu ');
-    let text4start = html.indexOf('Die Sonne zeigt sich nur etwa ');
-    let text5start = html.indexOf('Es gibt bis zu ');
-    let text6start = html.indexOf('Die Sonne ist fast nicht zu sehen');
-    let text7start = html.indexOf('der astronomisch möglichen Sonnenscheindauer');
+    const text1start = html.indexOf('Die Sonne ist heute fast nicht zu sehen');
+    const text2start = html.indexOf('Heute gibt es bis zu ');
+    const text3start = html.indexOf('Heute werden bis zu ');
+    const text4start = html.indexOf('Die Sonne zeigt sich nur etwa ');
+    const text5start = html.indexOf('Es gibt bis zu ');
+    const text6start = html.indexOf('Die Sonne ist fast nicht zu sehen');
+    const text7start = html.indexOf('der astronomisch möglichen Sonnenscheindauer');
     let s = '?'
     
     if (text1start != -1){s = 0}
     
     else if (text2start != -1) {
-        let sEnde = html.indexOf('Sonnenstunden', text2start);
+        const sEnde = html.indexOf('Sonnenstunden', text2start);
         s = html.substring(text2start+21, sEnde-1).trim();
     }
     
     else if (text3start != -1) {
-        let sEnde = html.indexOf('Sonnenstunden', text3start);
+        const sEnde = html.indexOf('Sonnenstunden', text3start);
         s = html.substring(text3start+20, sEnde-1).trim();
     }    
 
     else if (text4start != -1) {
-        let sEnde = html.indexOf('Stunde', text4start);
+        const sEnde = html.indexOf('Stunde', text4start);
         s = html.substring(text4start+29, sEnde-1).trim();
     }    
 
     else if (text5start != -1) {
-        let sEnde = html.indexOf('Sonnenstunden', text5start);
+        const sEnde = html.indexOf('Sonnenstunden', text5start);
         s = html.substring(text5start+15, sEnde-1).trim();
     }      
     
@@ -355,7 +328,7 @@ function extrahieresonnenstunden(html) {
     }                                
                                                                                                 
     else if (text7start != -1) {
-        let sEnde = html.indexOf('Stunde', text7start);
+        const sEnde = html.indexOf('Stunde', text7start);
         s = html.substring(sEnde-3, sEnde-1).trim();
     }      
     
@@ -364,26 +337,12 @@ function extrahieresonnenstunden(html) {
 
 
 // Funktion Auswertung Daten (Ergebnis: trocken oder nass)
-/**
-  function auswertungDaten(array) {
-	let bewertung='trocken';
-	if (array[2] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
-	if (array[5] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
-	if (array[8] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
-	if (array[11] >= grenzwertRegenwahrscheinlichkeit) {bewertung='nass'};
-	return bewertung;
-}
-**/
 function auswertungDaten(wetterdaten) {
-
   for (const eintrag of wetterdaten) {
-
     if (eintrag.regenwahrscheinlichkeit >= grenzwertRegenwahrscheinlichkeit) {
       return 'nass';
     }
-
   }
-
   return 'trocken';
 }
 
@@ -398,7 +357,7 @@ function colorStack(stack, color, level = 2) {
 
 // Funktion antworttextausgeben zur Ausgabe der zwei zentrierten Textzeilen
 function antworttextausgeben(stack, text, color) {
-    let zentriert = stack.addStack();
+    const zentriert = stack.addStack();
     zentriert.layoutHorizontally();
     zentriert.addSpacer();
     zentriert.size = new Size(0,18);
@@ -413,7 +372,7 @@ function antworttextausgeben(stack, text, color) {
 
 // Funktion Ausgabe Spalte 1
 function spalte1ausgeben(stack, text) {
-  let formatieren = stack.addStack();
+  const formatieren = stack.addStack();
   formatieren.layoutHorizontally();
   formatieren.size = new Size(0,22);
   formatieren.centerAlignContent();
@@ -425,13 +384,13 @@ function spalte1ausgeben(stack, text) {
 
 // Funktion Ausgabe Spalte 2
 function spalte2ausgeben(stack, text) {
-  let rechtsbuendig = stack.addStack();
+  const rechtsbuendig = stack.addStack();
   rechtsbuendig.layoutHorizontally();
   rechtsbuendig.size = new Size(0,22);
   rechtsbuendig.centerAlignContent();
   rechtsbuendig.addSpacer();
   colorStack(rechtsbuendig, '#2496a1');
-  let t = rechtsbuendig.addText(text + '%');
+  const t = rechtsbuendig.addText(text + '%');
   t.font=Font.boldSystemFont(12);
   if (text >= grenzwertRegenwahrscheinlichkeit) {
     t.textColor=Color.red();
@@ -441,11 +400,23 @@ function spalte2ausgeben(stack, text) {
 
 // Funktion Ausgabe Spalte 3
 function spalte3ausgeben(stack, text) {
-  let formatieren = stack.addStack();
+  const formatieren = stack.addStack();
   formatieren.layoutHorizontally();
   formatieren.size = new Size(0,22);
   formatieren.centerAlignContent();
   colorStack(formatieren, '#68391A');
-  let t = formatieren.addText(text);
+  const t = formatieren.addText(text);
   t.font=Font.regularSystemFont(9);
+}
+
+
+// Funktion Linie im Log zeichnen
+function logDivider(level) {
+  if (debugLevel >= level) console.log("-------------------");
+}
+
+
+// Funktion Log-Eintrag erstellen
+function debugLog(level, text) {
+  if (debugLevel >= level) console.log(text);
 }
