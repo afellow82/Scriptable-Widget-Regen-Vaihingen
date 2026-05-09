@@ -7,8 +7,7 @@ const version = "2.00𝛆";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
-// - Idee: Evtl. Wettertext nicht abschneiden
-// - Funktion Sonnenstunden mit Regex vereinfachen
+// - <Keine>
 
 
 const wetterdaten = [];
@@ -58,6 +57,8 @@ for (const eintrag of wetterdaten) {
     `${eintrag.tageszeit} | ${eintrag.regenwahrscheinlichkeit}% | ${eintrag.wetterbeschreibung}`
   );
 }
+logDivider(1);
+debugLog(1, "Sonnenstunden: " + sonnenstunden)
 
 // hauptStack für Trennung linke und rechte Spalte
 const hauptStack = widget.addStack();
@@ -290,49 +291,25 @@ function wetterbeschreibungextrahieren(html, start) {
 // Textvariante 4: Die Sonne zeigt sich nur etwa 1 Stunde
 // Textvariante 5: Es gibt bis zu 4 Sonnenstunden
 // Textvariante 6: Die Sonne ist fast nicht zu sehen
-// Textvariante 7: 1 Stunde oder X Stunden
+// Textvariante 7: 1 Stunde (oder: 3 Stunden) der astronomisch möglichen Sonnenscheindauer
 function extrahieresonnenstunden(html) {
-    const text1start = html.indexOf('Die Sonne ist heute fast nicht zu sehen');
-    const text2start = html.indexOf('Heute gibt es bis zu ');
-    const text3start = html.indexOf('Heute werden bis zu ');
-    const text4start = html.indexOf('Die Sonne zeigt sich nur etwa ');
-    const text5start = html.indexOf('Es gibt bis zu ');
-    const text6start = html.indexOf('Die Sonne ist fast nicht zu sehen');
-    const text7start = html.indexOf('der astronomisch möglichen Sonnenscheindauer');
-    let s = '?'
-    
-    if (text1start != -1){s = 0}
-    
-    else if (text2start != -1) {
-        const sEnde = html.indexOf('Sonnenstunden', text2start);
-        s = html.substring(text2start+21, sEnde-1).trim();
-    }
-    
-    else if (text3start != -1) {
-        const sEnde = html.indexOf('Sonnenstunden', text3start);
-        s = html.substring(text3start+20, sEnde-1).trim();
-    }    
-
-    else if (text4start != -1) {
-        const sEnde = html.indexOf('Stunde', text4start);
-        s = html.substring(text4start+29, sEnde-1).trim();
-    }    
-
-    else if (text5start != -1) {
-        const sEnde = html.indexOf('Sonnenstunden', text5start);
-        s = html.substring(text5start+15, sEnde-1).trim();
-    }      
-    
-    else if (text6start != -1) {
-        s = 0;
-    }                                
-                                                                                                
-    else if (text7start != -1) {
-        const sEnde = html.indexOf('Stunde', text7start);
-        s = html.substring(sEnde-3, sEnde-1).trim();
-    }      
-    
-    return s;
+  const patterns = [
+    /Heute (?:gibt es|werden) bis zu (\d+)/,
+    /Es gibt bis zu (\d+)/,
+    /Die Sonne zeigt sich nur etwa (\d+)/,
+    /(\d+)\s*Sonnenstunden/
+  ];
+  for (const p of patterns) {
+    const m = html.match(p);
+    if (m) return parseInt(m[1]);
+  }
+  if (
+    html.includes('Die Sonne ist heute fast nicht zu sehen') ||
+    html.includes('Die Sonne ist fast nicht zu sehen')
+  ) {
+    return 0;
+  }
+  return '?';
 }
 
 
