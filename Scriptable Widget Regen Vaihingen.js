@@ -7,13 +7,18 @@ const version = "2.00𝛄";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
-// – Idee: Umstellung Speicherstruktur auf Objekt
+// – Verbesserung: Umstellung Speicherstruktur auf Objekt
 // - Idee: Evtl. Wettertext nicht abschneiden
+// - Verbesserung: Schelifen für Ausgabe-Funktionen
+// - Verbesserung: let -> const
+// - Verbesserung: logDebub
+// - Funktion Sonnenstunden mit Regex vereinfachen
+// - Idee: Umstellung auf komplett englisch
 
 
 const wetterdatenArray = [];
 
-const debugLevel = 0;
+const debugLevel = 1;
 // 0 - Kein Debuggin
 // 1 - Werte loggen
 // 2 - Zusätzlich Stacks einfärben
@@ -37,7 +42,7 @@ g.locations = [0,1];
 g.colors = [hgfarbeoben, hgfarbeunten];
 
 // HTML-Quelltext der Anzeigenseite abrufen
-let url = 'https://www.wetter.com/deutschland/stuttgart/vaihingen/DE0010287103.html';
+const url = 'https://www.wetter.com/deutschland/stuttgart/vaihingen/DE0010287103.html';
 let req = new Request(url);
 let html = await req.loadString();
 
@@ -53,7 +58,7 @@ let sonnenstunden = extrahieresonnenstunden(html);
 let ergebnis = auswertungDaten(wetterdatenArray);
 
 if (debugLevel > 0) {
-  for (i = 1; i < wetterdatenArray.length; i++) {
+  for (let i = 1; i < wetterdatenArray.length; i++) {
     console.log("wetterdatenArray[" + i + "]: " + wetterdatenArray[i]);
   }
 }
@@ -200,7 +205,9 @@ versionsStack.addSpacer(10);
 
 
 // Widget starten
-widget.presentMedium();
+if (!config.runsInWidget) {
+  widget.presentMedium();
+}
 
 
 // Funktion Wetterdaten aus Webseiten-Quelltext holen
@@ -244,22 +251,22 @@ function extrahierewetterdaten(html,array) {
     let w6start = html.indexOf('"weather-short-text palm-text-clamp"',w3start+1);
     let w9start = html.indexOf('"weather-short-text palm-text-clamp"',w6start+1);
     let w12start = html.indexOf('"weather-short-text palm-text-clamp"',w9start+1);
-    array[3] = wetterbeschreibungextrahieren(w3start);
-    array[6] = wetterbeschreibungextrahieren(w6start);
-    array[9] = wetterbeschreibungextrahieren(w9start);
-    array[12] = wetterbeschreibungextrahieren(w12start);
+    array[3] = wetterbeschreibungextrahieren(html, w3start);
+    array[6] = wetterbeschreibungextrahieren(html, w6start);
+    array[9] = wetterbeschreibungextrahieren(html, w9start);
+    array[12] = wetterbeschreibungextrahieren(html, w12start);
 }
 
 
 // Funktion Wetterbeschreibungen aus Webseiten-Quelltext holen
-function wetterbeschreibungextrahieren(start) {
+function wetterbeschreibungextrahieren(html, start) {
   let start2 = html.indexOf('>', start);
   let ende = html.indexOf('</div>', start2);
   let teststring = html.substring(start2+1, ende).trim();
   // Kürzung wenn Sonderfall <br />
-  test = teststring.includes("<br />");
+  let test = teststring.includes("<br />");
 
-  if (test == true) {
+  if (test) {
     let ende2 = teststring.indexOf('<br />');
     teststring = teststring.substring(0, ende2-1).trim()+'…';
   }
