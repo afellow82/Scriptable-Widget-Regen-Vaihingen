@@ -3,11 +3,12 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.00𝛃";
-// 08.05.2026
+const version = "2.00𝛄";
+// 09.05.2026
 
 // ToDo / Bugs / Ideen: 
 // – Idee: Umstellung Speicherstruktur auf Objekt
+// - Idee: Evtl. Wettertext nicht abschneiden
 
 
 const wetterdatenArray = [];
@@ -82,7 +83,6 @@ if (ergebnis === "trocken") {
 let antwortsymbolStack = linksStack.addStack();
 antwortsymbolStack.layoutHorizontally();
 colorStack(antwortsymbolStack, '#FF0054');
-//antwortsymbolStack.addSpacer();
 
 let antwortSymbol;
 if (ergebnis === "trocken") {
@@ -118,13 +118,16 @@ let sonneSymbolBild = sonnenStack.addImage(sonneSymbol.image);
 sonneSymbolBild.imageSize = new Size(22, 22);
 sonneSymbolBild.tintColor = Color.yellow();
 
+if (sonnenstunden > 9) {
+  sonnenStack.addSpacer(2);
+} else {
+  sonnenStack.addSpacer(5);
+}
+
+let sonnenstundentext = sonnenStack.addText(sonnenstunden + " Std.");
+sonnenstundentext.font=Font.boldSystemFont(12);
+
 sonnenStack.addSpacer();
-
-let sonnenstundentext = sonnenStack.addText(sonnenstunden + " h");
-sonnenstundentext.font=Font.regularSystemFont(12);
-
-sonnenStack.addSpacer();
-
 
 // rechtsStack für Inhalte auf der rechten Seite
 let rechtsStack = hauptStack.addStack();
@@ -169,7 +172,7 @@ spalte2Stack.size = new Size(45,0);
 
 spalte2ausgeben(spalte2Stack, wetterdatenArray[2]);
 spalte2ausgeben(spalte2Stack, wetterdatenArray[5]);
-spalte2ausgeben(spalte2Stack, 100);
+spalte2ausgeben(spalte2Stack, wetterdatenArray[8]);
 spalte2ausgeben(spalte2Stack, wetterdatenArray[11]);
 
 tabelleStack.addSpacer(4);
