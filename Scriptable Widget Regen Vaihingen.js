@@ -3,7 +3,7 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.00";
+const version = "2.01";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
@@ -53,9 +53,7 @@ const ergebnis = auswertungDaten(wetterdaten);
 
 logDivider(1);
 for (const eintrag of wetterdaten) {
-  console.log(
-    `${eintrag.tageszeit} | ${eintrag.regenwahrscheinlichkeit}% | ${eintrag.wetterbeschreibung}`
-  );
+  debugLog(1, `${eintrag.tageszeit} | ${eintrag.regenwahrscheinlichkeit}% | ${eintrag.wetterbeschreibung}`);
 }
 logDivider(1);
 debugLog(1, "Sonnenstunden: " + sonnenstunden)
