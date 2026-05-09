@@ -3,7 +3,7 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.00𝛆";
+const version = "2.00";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
@@ -12,7 +12,7 @@ const version = "2.00𝛆";
 
 const wetterdaten = [];
 
-const debugLevel = 1;
+const debugLevel = 0;
 // 0 - Kein Debuggin
 // 1 - Werte loggen
 // 2 - Zusätzlich Stacks einfärben
@@ -271,7 +271,7 @@ function extrahierewetterdaten(html,array) {
 function wetterbeschreibungextrahieren(html, start) {
   const start2 = html.indexOf('>', start);
   const ende = html.indexOf('</div>', start2);
-  const teststring = html.substring(start2+1, ende).trim();
+  let teststring = html.substring(start2+1, ende).trim();
   // Kürzung wenn Sonderfall <br />
   const test = teststring.includes("<br />");
 
@@ -309,7 +309,7 @@ function extrahieresonnenstunden(html) {
   ) {
     return 0;
   }
-  return '?';
+  return -1;
 }
 
 
