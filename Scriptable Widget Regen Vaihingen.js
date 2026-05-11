@@ -3,17 +3,17 @@
 // Optimierungen durch ChatGPT
 
 //Version
-const version = "2.01";
+const version = "2.02";
 // 09.05.2026
 
 // ToDo / Bugs / Ideen: 
-// - <Keine>
+// - <keine>
 
 
 const wetterdaten = [];
 
 const debugLevel = 0;
-// 0 - Kein Debuggin
+// 0 - Kein Debugging
 // 1 - Werte loggen
 // 2 - Zusätzlich Stacks einfärben
 
@@ -135,7 +135,7 @@ colorStack(rechtsStack, '#129951');
 
 // Ort und Stand einfügen
 const ortText = rechtsStack.addText('Stuttgart-Vaihingen');
-ortText.font=Font.semiboldSystemFont(12);
+ortText.font=Font.boldSystemFont(12);
 
 const jetzt = new Date()
   .toLocaleString("de-DE", {
