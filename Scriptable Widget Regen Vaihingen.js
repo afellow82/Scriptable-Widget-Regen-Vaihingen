@@ -4,7 +4,7 @@
 
 //Version
 const version = "2.02";
-// 09.05.2026
+// 11.05.2026
 
 // ToDo / Bugs / Ideen: 
 // - <keine>
